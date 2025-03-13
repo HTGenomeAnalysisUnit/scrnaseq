@@ -8,6 +8,8 @@ process CELLRANGER_MULTI {
     val meta
     tuple val(meta_gex)        , path (gex_fastqs   , stageAs: "fastqs/gex/fastq_???/*")
     tuple val(meta_vdj)        , path (vdj_fastqs   , stageAs: "fastqs/vdj/fastq_???/*")
+    tuple val(meta_vdjb)       , path (vdjb_fastqs  , stageAs: "fastqs/vdj-b/fastq_???/*")
+    tuple val(meta_vdjt)       , path (vdjt_fastqs  , stageAs: "fastqs/vdj-t/fastq_???/*")
     tuple val(meta_ab)         , path (ab_fastqs    , stageAs: "fastqs/ab/fastq_???/*")
     tuple val(meta_beam)       , path (beam_fastqs  , stageAs: "fastqs/beam/fastq_???/*")
     tuple val(meta_cmo)        , path (cmo_fastqs   , stageAs: "fastqs/cmo/fastq_???/*")
@@ -57,6 +59,8 @@ process CELLRANGER_MULTI {
 
     include_gex  = gex_fastqs.first().getName() != 'fastqs' && gex_reference           ? '[gene-expression]'     : ''
     include_vdj  = vdj_fastqs.first().getName() != 'fastqs' && vdj_reference           ? '[vdj]'                 : ''
+    include_vdj  = vdjb_fastqs.first().getName() != 'fastqs' && vdj_reference           ? '[vdj]'                 : "$include_vdj"
+    include_vdj  = vdjt_fastqs.first().getName() != 'fastqs' && vdj_reference           ? '[vdj]'                 : "$include_vdj"
     include_beam = beam_fastqs.first().getName() != 'fastqs' && beam_control_panel     ? '[antigen-specificity]' : ''
     include_cmo  = cmo_fastqs.first().getName() != 'fastqs' && cmo_barcodes            ? '[samples]'             : ''
     include_fb   = ab_fastqs.first().getName() != 'fastqs' && fb_reference             ? '[feature]'             : ''
@@ -123,6 +127,8 @@ process CELLRANGER_MULTI {
     // After renaming it gets in 'fastq_all' folder
     fastq_gex      = include_gex                      ? "${meta_gex.id},./fastq_all/gex,,Gene Expression"            : ''
     fastq_vdj      = include_vdj                      ? "${meta_vdj.id},./fastq_all/vdj,,VDJ"                        : ''
+    fastq_vdjb     = include_vdj                      ? "${meta_vdjb.id},./fastq_all/vdjb,,VDJ-B"                    : ''
+    fastq_vdjt     = include_vdj                      ? "${meta_vdjt.id},./fastq_all/vdjt,,VDJ-T"                    : ''
     fastq_antibody = include_fb && ab_options_use     ? "${meta_ab.id},./fastq_all/ab,,Antibody Capture"             : ''
     fastq_beam     = include_beam                     ? "${meta_beam.id},./fastq_all/beam,,Antigen Capture"         : ''
     fastq_crispr   = include_fb && crispr_options_use ? "${meta_crispr.id},./fastq_all/crispr,,CRISPR Guide Capture" : ''
