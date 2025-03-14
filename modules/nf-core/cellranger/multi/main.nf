@@ -127,8 +127,8 @@ process CELLRANGER_MULTI {
     // After renaming it gets in 'fastq_all' folder
     fastq_gex      = include_gex                      ? "${meta_gex.id},./fastq_all/gex,,Gene Expression"            : ''
     fastq_vdj      = include_vdj                      ? "${meta_vdj.id},./fastq_all/vdj,,VDJ"                        : ''
-    fastq_vdjb     = include_vdjb                     ? "${meta_vdjb.id},./fastq_all/vdjb,,VDJ-B"                    : ''
-    fastq_vdjt     = include_vdjt                     ? "${meta_vdjt.id},./fastq_all/vdjt,,VDJ-T"                    : ''
+    fastq_vdjb     = include_vdjb                     ? "${meta_vdjb.id},./fastq_all/vdj-b,,VDJ-B"                    : ''
+    fastq_vdjt     = include_vdjt                     ? "${meta_vdjt.id},./fastq_all/vdj-t,,VDJ-T"                    : ''
     fastq_antibody = include_fb && ab_options_use     ? "${meta_ab.id},./fastq_all/ab,,Antibody Capture"             : ''
     fastq_beam     = include_beam                     ? "${meta_beam.id},./fastq_all/beam,,Antigen Capture"         : ''
     fastq_crispr   = include_fb && crispr_options_use ? "${meta_crispr.id},./fastq_all/crispr,,CRISPR Guide Capture" : ''
