@@ -59,8 +59,8 @@ process CELLRANGER_MULTI {
 
     include_gex  = gex_fastqs.first().getName() != 'fastqs' && gex_reference           ? '[gene-expression]'     : ''
     include_vdj  = vdj_fastqs.first().getName() != 'fastqs' && vdj_reference           ? '[vdj]'                 : ''
-    include_vdj  = vdjb_fastqs.first().getName() != 'fastqs' && vdj_reference           ? '[vdj]'                 : "$include_vdj"
-    include_vdj  = vdjt_fastqs.first().getName() != 'fastqs' && vdj_reference           ? '[vdj]'                 : "$include_vdj"
+    include_vdjb  = vdjb_fastqs.first().getName() != 'fastqs' && vdj_reference         ? '[vdj]'                 : ''
+    include_vdjt  = vdjt_fastqs.first().getName() != 'fastqs' && vdj_reference         ? '[vdj]'                 : ''
     include_beam = beam_fastqs.first().getName() != 'fastqs' && beam_control_panel     ? '[antigen-specificity]' : ''
     include_cmo  = cmo_fastqs.first().getName() != 'fastqs' && cmo_barcodes            ? '[samples]'             : ''
     include_fb   = ab_fastqs.first().getName() != 'fastqs' && fb_reference             ? '[feature]'             : ''
@@ -94,7 +94,7 @@ process CELLRANGER_MULTI {
     // collect options for each section
     // these are pulled from the meta maps
     gex_options_use    = include_gex && meta_gex?.options   ? 'true' : null
-    vdj_options_use    = include_vdj && meta_vdj?.options   ? 'true' : null
+    vdj_options_use    = (include_vdj || include_vdjb || include_vdjt) && meta_vdj?.options   ? 'true' : null
     ab_options_use     = include_fb && meta_ab?.options     ? 'true' : null
     beam_options_use   = include_beam && meta_beam?.options ? 'true' : null
     cmo_options_use    = include_cmo && meta_cmo?.options   ? 'true' : null
@@ -127,12 +127,15 @@ process CELLRANGER_MULTI {
     // After renaming it gets in 'fastq_all' folder
     fastq_gex      = include_gex                      ? "${meta_gex.id},./fastq_all/gex,,Gene Expression"            : ''
     fastq_vdj      = include_vdj                      ? "${meta_vdj.id},./fastq_all/vdj,,VDJ"                        : ''
-    fastq_vdjb     = include_vdj                      ? "${meta_vdjb.id},./fastq_all/vdjb,,VDJ-B"                    : ''
-    fastq_vdjt     = include_vdj                      ? "${meta_vdjt.id},./fastq_all/vdjt,,VDJ-T"                    : ''
+    fastq_vdjb     = include_vdjb                     ? "${meta_vdjb.id},./fastq_all/vdjb,,VDJ-B"                    : ''
+    fastq_vdjt     = include_vdjt                     ? "${meta_vdjt.id},./fastq_all/vdjt,,VDJ-T"                    : ''
     fastq_antibody = include_fb && ab_options_use     ? "${meta_ab.id},./fastq_all/ab,,Antibody Capture"             : ''
     fastq_beam     = include_beam                     ? "${meta_beam.id},./fastq_all/beam,,Antigen Capture"         : ''
     fastq_crispr   = include_fb && crispr_options_use ? "${meta_crispr.id},./fastq_all/crispr,,CRISPR Guide Capture" : ''
     fastq_cmo      = include_cmo                      ? "${meta_cmo.id},./fastq_all/cmo,,Multiplexing Capture"       : ''
+
+    // if any of include_vdj, include_vdjb or include_vdjt is true, then set include_vdj to '[vdj]' else ''
+    include_vdj = include_vdj || include_vdjb || include_vdjt ? '[vdj]' : ''
 
     // name the config file
     config = "cellranger_multi_config.csv"
